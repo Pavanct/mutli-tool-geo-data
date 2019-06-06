@@ -54,9 +54,9 @@ export default {
     return {
       zoom: 13,
       center: latLng(52.5138587,13.3187443),
-      url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+      url: "https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png",
       attribution:
-        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        '&copy; <a href="subdomainshttp://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       withPopup: latLng(52.5138587,13.3187443),
       withTooltip: latLng(52.5138587,13.3187443),
       currentZoom: 11.5,
