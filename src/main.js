@@ -7,6 +7,8 @@ import "leaflet/dist/leaflet.css"
 Vue.component('l-map', Vue2Leaflet.LMap);
 Vue.component('l-tile-layer', Vue2Leaflet.LTileLayer);
 Vue.component('l-marker', Vue2Leaflet.LMarker);
+Vue.component('l-control-layers', Vue2Leaflet.LControlLayers)
+
 
 delete Icon.Default.prototype._getIconUrl;
 import L from 'leaflet';

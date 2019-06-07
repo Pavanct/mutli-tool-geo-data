@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%; overflow: auto; position: unset;">
-
-    <l-map id="l-map"
+    <l-map
+      id="l-map"
       :zoom="zoom"
       :center="center"
       :options="mapOptions"
@@ -9,7 +9,16 @@
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate"
     >
-      <l-tile-layer :url="url" :attribution="attribution" />
+    <l-control-layers position="topright"  ></l-control-layers>
+      <l-tile-layer
+      v-for="tileProvider in tileProviders"
+      :key="tileProvider.name"
+      :name="tileProvider.name"
+      :visible="tileProvider.visible"
+      :url="tileProvider.url"
+      :attribution="tileProvider.attribution"
+      :token="token"
+      layer-type="base"/>
       <l-marker :lat-lng="withPopup">
         <l-popup>
           <div @click="innerClick">
@@ -35,7 +44,8 @@
         </l-tooltip>
       </l-marker>
     </l-map>
-    </div>
+
+  </div>
 </template>
 
 <script>
@@ -53,18 +63,33 @@ export default {
   data() {
     return {
       zoom: 13,
-      center: latLng(52.5138587,13.3187443),
-      url: "https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png",
+      center: latLng(52.5138587, 13.3187443),
+      url:
+        "https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png",
       attribution:
         '&copy; <a href="subdomainshttp://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      withPopup: latLng(52.5138587,13.3187443),
-      withTooltip: latLng(52.5138587,13.3187443),
+      withPopup: latLng(52.5138587, 13.3187443),
+      withTooltip: latLng(52.5138587, 13.3187443),
       currentZoom: 11.5,
-      currentCenter: latLng(52.5138587,13.3187443),
+      currentCenter: latLng(52.5138587, 13.3187443),
       showParagraph: false,
       mapOptions: {
         zoomSnap: 0.5
-      }
+      },
+      tileProviders: [
+        {
+          name: 'OpenStreetMap',
+          visible: true,
+          attribution: '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+          url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        },
+        {
+          name: 'OpenTopoMap',
+          visible: false,
+          url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+          attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+        }
+      ]
     };
   },
   methods: {
@@ -92,10 +117,11 @@ body,
   height: 100%;
   margin: 0;
 }
-body, html{
+body,
+html {
   height: 100%;
 }
-#l-map{
+#l-map {
   height: 100%;
 }
 </style>
