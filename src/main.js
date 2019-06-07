@@ -8,11 +8,12 @@ Vue.component('l-map', Vue2Leaflet.LMap);
 Vue.component('l-tile-layer', Vue2Leaflet.LTileLayer);
 Vue.component('l-marker', Vue2Leaflet.LMarker);
 Vue.component('l-control-layers', Vue2Leaflet.LControlLayers)
-
+import "leaflet.icon.glyph";
 
 delete Icon.Default.prototype._getIconUrl;
 import L from 'leaflet';
-delete L.Icon.Default.prototype._getIconUrl;
+delete Icon.Default.prototype._getIconUrl;
+
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
