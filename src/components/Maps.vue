@@ -109,6 +109,24 @@ export default {
           subdomains: "abcd",
           minZoom: 0,
           maxZoom: 18
+        },
+        {
+          name: "CartoDB_DarkMatter",
+          visible: true,
+          url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          subdomains: "abcd",
+          minZoom: 0,
+          maxZoom: 19
+        },
+        {
+          name: "esri-satellite",
+          visible: true,
+          url:
+            "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          attribution: '&copy; <a href="http://www.esri.com/">Esri</a> i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+          maxZoom: 18
         }
       ]
     };
