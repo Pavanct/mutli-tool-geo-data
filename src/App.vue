@@ -1,14 +1,14 @@
 <template>
   <div id="app" style="height: 100%">
-    <SetBounds/>
+    <Maps/>
   </div>
 </template>
 
 <script>
-import SetBounds from "./components/SetBounds";
+import Maps from "./components/Maps";
 export default {
   components: {
-    SetBounds
+    Maps
   }
 };
 </script>

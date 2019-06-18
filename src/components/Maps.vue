@@ -5,6 +5,7 @@
       :zoom="zoom"
       :center="center"
       :options="mapOptions"
+      ref="map"
       style="height: 100%"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate"
@@ -51,6 +52,9 @@
 <script>
 import { latLng } from "leaflet";
 import { LMap, LTileLayer, LMarker, LPopup, LTooltip } from "vue2-leaflet";
+import 'leaflet-draw';
+import L from 'leaflet';
+
 export default {
   name: "Maps",
   components: {
@@ -144,6 +148,35 @@ export default {
     innerClick() {
       alert("Click!");
     }
+  },
+  mounted() {
+      this.$nextTick(() => {
+      const map = this.$refs.map.mapObject;
+      const drawControl = new L.Control.Draw({
+        position: 'topright',
+        draw: {
+          polyline: {
+            allowIntersection: false,
+            showArea: true
+          },
+          polygon: true,
+          rectangle: true,
+          circle: true,
+          marker: true
+        }
+      });
+
+      map.addControl(drawControl);
+
+      const editableLayers = new L.FeatureGroup().addTo(map);
+      map.on(L.Draw.Event.CREATED, (e) => {
+        // const type = e.layerType;
+        const layer = e.layer;
+
+        // Do whatever else you need to. (save to db, add to map etc)
+        editableLayers.addLayer(layer);
+      });
+    });
   }
 };
 </script>
