@@ -12,7 +12,7 @@
     >
       <l-control-layers position="topright"></l-control-layers>
       <l-tile-layer
-         v-for="tileProvider in tileProviders" 
+        v-for="tileProvider in tileProviders"
         :key="tileProvider.name"
         :name="tileProvider.name"
         :visible="tileProvider.visible"
@@ -21,6 +21,7 @@
         :token="token"
         layer-type="base"
       />
+      <l-grid-layer :tile-component="tileComponent"></l-grid-layer>
       <l-marker :lat-lng="withPopup">
         <l-popup>
           <div @click="innerClick">
@@ -51,9 +52,16 @@
 
 <script>
 import { latLng } from "leaflet";
-import { LMap, LTileLayer, LMarker, LPopup, LTooltip } from "vue2-leaflet";
-import 'leaflet-draw';
-import L from 'leaflet';
+import {
+  LMap,
+  LTileLayer,
+  LMarker,
+  LPopup,
+  LTooltip,
+  LGridLayer
+} from "vue2-leaflet";
+import "leaflet-draw";
+import L from "leaflet";
 import "leaflet-draw/dist/leaflet.draw.css";
 
 export default {
@@ -63,7 +71,18 @@ export default {
     LTileLayer,
     LMarker,
     LPopup,
-    LTooltip
+    LTooltip,
+    LGridLayer
+  },
+  tileComponent: {
+    name: "tile-component",
+    props: {
+      coords: {
+        type: Object,
+        required: true
+      }
+    },
+    template: "<div>Coords: {{coords.x}}, {{coords.y}}, {{coords.z}}</div>"
   },
   data() {
     return {
@@ -130,7 +149,8 @@ export default {
           visible: false,
           url:
             "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-          attribution: '&copy; <a href="http://www.esri.com/">Esri</a> i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+          attribution:
+            '&copy; <a href="http://www.esri.com/">Esri</a> i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
           maxZoom: 18
         }
       ]
@@ -151,10 +171,10 @@ export default {
     }
   },
   mounted() {
-      this.$nextTick(() => {
+    this.$nextTick(() => {
       const map = this.$refs.map.mapObject;
       const drawControl = new L.Control.Draw({
-        position: 'topright',
+        position: "topright",
         draw: {
           polyline: {
             allowIntersection: false,
@@ -170,7 +190,7 @@ export default {
       map.addControl(drawControl);
 
       const editableLayers = new L.FeatureGroup().addTo(map);
-      map.on(L.Draw.Event.CREATED, (e) => {
+      map.on(L.Draw.Event.CREATED, e => {
         // const type = e.layerType;
         const layer = e.layer;
 
