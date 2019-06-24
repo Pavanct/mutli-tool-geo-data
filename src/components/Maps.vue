@@ -22,7 +22,7 @@
         layer-type="base"
       />
       <l-grid-layer :tile-component="tileComponent"></l-grid-layer>
-      <l-marker :lat-lng="withPopup">
+      <!-- <l-marker :lat-lng="withPopup">
         <l-popup>
           <div @click="innerClick">
             I am a popup
@@ -33,8 +33,8 @@
             </p>
           </div>
         </l-popup>
-      </l-marker>
-      <l-marker :lat-lng="withTooltip">
+      </l-marker>-->
+      <!-- <l-marker :lat-lng="withTooltip">
         <l-tooltip :options="{ permanent: true, interactive: true }">
           <div @click="innerClick">
             I am a tooltip
@@ -45,7 +45,7 @@
             </p>
           </div>
         </l-tooltip>
-      </l-marker>
+      </l-marker>-->
     </l-map>
   </div>
 </template>
@@ -55,9 +55,9 @@ import { latLng } from "leaflet";
 import {
   LMap,
   LTileLayer,
-  LMarker,
-  LPopup,
-  LTooltip,
+  // LMarker,
+  // LPopup,
+  // LTooltip,
   LGridLayer
 } from "vue2-leaflet";
 import "leaflet-draw";
@@ -69,9 +69,9 @@ export default {
   components: {
     LMap,
     LTileLayer,
-    LMarker,
-    LPopup,
-    LTooltip,
+    // LMarker,
+    // LPopup,
+    // LTooltip,
     LGridLayer
   },
   tileComponent: {
@@ -193,6 +193,11 @@ export default {
       map.on(L.Draw.Event.CREATED, e => {
         // const type = e.layerType;
         const layer = e.layer;
+        var type = e.layerType;
+
+        if (type === "marker") {
+          layer.bindPopup("LatLng: " + layer.getLatLng()).openPopup();
+        }
 
         // Do whatever else you need to. (save to db, add to map etc)
         editableLayers.addLayer(layer);
