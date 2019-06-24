@@ -12,7 +12,6 @@
     >
       <l-control-layers position="topright"></l-control-layers>
       <l-tile-layer
-        v-for="tileProvider in tileProviders"
         :key="tileProvider.name"
         :name="tileProvider.name"
         :visible="tileProvider.visible"
