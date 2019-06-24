@@ -98,7 +98,7 @@ export default {
         },
         {
           name: "Stamen Design",
-          visible: true,
+          visible: false,
           url:
             "https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png",
           attribution:
@@ -106,7 +106,7 @@ export default {
         },
         {
           name: "Stamen Terrain",
-          visible: true,
+          visible: false,
           url:
             "https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.png",
           attribution:
@@ -117,7 +117,7 @@ export default {
         },
         {
           name: "CartoDB_DarkMatter",
-          visible: true,
+          visible: false,
           url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
@@ -127,7 +127,7 @@ export default {
         },
         {
           name: "esri-satellite",
-          visible: true,
+          visible: false,
           url:
             "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
           attribution: '&copy; <a href="http://www.esri.com/">Esri</a> i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
