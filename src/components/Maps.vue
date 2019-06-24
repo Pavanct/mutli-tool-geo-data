@@ -54,6 +54,7 @@ import { latLng } from "leaflet";
 import { LMap, LTileLayer, LMarker, LPopup, LTooltip } from "vue2-leaflet";
 import 'leaflet-draw';
 import L from 'leaflet';
+import "leaflet-draw/dist/leaflet.draw.css";
 
 export default {
   name: "Maps",
