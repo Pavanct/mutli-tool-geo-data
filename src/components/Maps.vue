@@ -187,6 +187,22 @@ export default {
         }
       });
 
+      var drawnItems = new L.FeatureGroup();
+      map.addLayer(drawnItems);
+
+      map.on("draw:created", function(e) {
+        var type = e.layerType,
+          layer = e.layer;
+
+        if (type === "rectangle") {
+          layer.on("mouseover", function() {
+            alert(layer.getLatLngs());
+          });
+        }
+
+        drawnItems.addLayer(layer);
+      });
+
       map.addControl(drawControl);
 
       const editableLayers = new L.FeatureGroup().addTo(map);
@@ -198,6 +214,11 @@ export default {
         if (type === "marker") {
           layer.bindPopup("LatLng: " + layer.getLatLng()).openPopup();
         }
+
+        // if (type === "rectangle") {
+        //   layer.bindPopup("LatLng: " + layer.getLatLng()).openPopup();
+        // }
+        
 
         // Do whatever else you need to. (save to db, add to map etc)
         editableLayers.addLayer(layer);
