@@ -222,6 +222,12 @@ export default {
           });
         }
 
+        if (type === "polyline") {
+          layer.on("mouseover", function() {
+            alert(layer.getLatLngs());
+          });
+        }
+
         drawnItems.addLayer(layer);
       });
 
