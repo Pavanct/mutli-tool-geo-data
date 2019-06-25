@@ -187,6 +187,22 @@ export default {
         }
       });
 
+      // var drawnItems1 = new L.FeatureGroup();
+      // map.addLayer(drawnItems1);
+
+      // map.on("draw:created", function(e) {
+      //   var type = e.layerType,
+      //     layer = e.layer;
+
+      //   if (type === "circle") {
+      //     layer.on("mouseover", function() {
+      //       alert(layer.getLatLngs());
+      //     });
+      //   }
+
+      //   drawnItems1.addLayer(layer);
+      // });  
+
       var drawnItems = new L.FeatureGroup();
       map.addLayer(drawnItems);
 
@@ -195,6 +211,12 @@ export default {
           layer = e.layer;
 
         if (type === "rectangle") {
+          layer.on("mouseover", function() {
+            alert(layer.getLatLngs());
+          });
+        }
+
+        if (type === "polygon") {
           layer.on("mouseover", function() {
             alert(layer.getLatLngs());
           });
