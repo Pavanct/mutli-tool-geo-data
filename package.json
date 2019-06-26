@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
+    "jquery": "^3.4.1",
     "leaflet": "^1.5.1",
     "leaflet-draw": "^1.0.4",
     "leaflet.icon.glyph": "0.2.1",
@@ -22,6 +23,7 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "vue-cli-plugin-bootstrap-vue": "^0.4.0",
     "vue-template-compiler": "^2.5.21"
   },
   "eslintConfig": {
