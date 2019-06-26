@@ -4,6 +4,7 @@ import * as Vue2Leaflet from 'vue2-leaflet';
 import { Icon } from 'leaflet'
 import "leaflet/dist/leaflet.css"
 
+
 Vue.component('l-map', Vue2Leaflet.LMap);
 Vue.component('l-tile-layer', Vue2Leaflet.LTileLayer);
 Vue.component('l-marker', Vue2Leaflet.LMarker);
