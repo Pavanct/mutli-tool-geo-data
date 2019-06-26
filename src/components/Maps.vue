@@ -47,6 +47,9 @@
         </l-tooltip>
       </l-marker>-->
     </l-map>
+    <button id="refreshButton" v-on:click="changeHashFunction('quadtree')">
+        Switch
+      </button>
   </div>
 </template>
 
@@ -187,22 +190,6 @@ export default {
         }
       });
 
-      // var drawnItems1 = new L.FeatureGroup();
-      // map.addLayer(drawnItems1);
-
-      // map.on("draw:created", function(e) {
-      //   var type = e.layerType,
-      //     layer = e.layer;
-
-      //   if (type === "circle") {
-      //     layer.on("mouseover", function() {
-      //       alert(layer.getLatLngs());
-      //     });
-      //   }
-
-      //   drawnItems1.addLayer(layer);
-      // });
-
       var drawnItems = new L.FeatureGroup();
       map.addLayer(drawnItems);
 
@@ -250,27 +237,7 @@ export default {
         // Do whatever else you need to. (save to db, add to map etc)
         editableLayers.addLayer(layer);
       });
-      // L.GridLayer.DebugCoords = L.GridLayer.extend({
-      //   createTile: function(coords) {
-      //     //removed , done
-      //     var tile = document.createElement("div");
-      //     //SlippyToQuad(coords.x, coords.y, coords.z);
-      //     tile.innerHTML = [coords.x, coords.y, coords.z].join(", ");
-      //     tile.style.outline = "1px solid red";
-
-      //     // setTimeout(function() {
-      //     //   done(null, tile); // Syntax is 'done(error, tile)'
-      //     // }, 500 + Math.random() * 1500);
-
-      //     return tile;
-      //   }
-      // });
-
-      // L.gridLayer.debugCoords = function(opts) {
-      //   return new L.GridLayer.DebugCoords(opts);
-      // };
-
-      // map.addLayer(L.gridLayer.debugCoords());
+      
 
 
       var labelConfig = {
@@ -278,7 +245,8 @@ export default {
         className: "my-label",
         direction: "right",
         offset: [5, 5],
-        zoomAnimation: true
+        zoomAnimation: true,
+        permanent: true
       };
 
       var labelConfig2 = {
@@ -286,7 +254,8 @@ export default {
         className: "my-label2",
         direction: "right",
         offset: [-15, -10],
-        zoomAnimation: true
+        zoomAnimation: true,
+        permanent: true
       };
 
       var rectStyle = {
@@ -416,47 +385,6 @@ export default {
         return quadKey.join("");
       }
 
-      // function long2tile(lon,zoom) { return (Math.floor((lon+180)/360*Math.pow(2,zoom))); }
-      // function lat2tile(lat,zoom)  { return (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom))); }
-      // function tile2long(x,z) {
-      //  return (x/Math.pow(2,z)*360-180);
-      // }
-      // function tile2lat(y,z) {
-      //  var n=Math.PI-2*Math.PI*y/Math.pow(2,z);
-      //  return (180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n))));
-      // }
-
-      // var hashAdapter = {
-      //   range: Object.keys(BASE32_CODES_DICT),
-      //   encode: function(centroid, precision) {
-      //     return "" + geohash.encode(centroid.lat, centroid.lng, precision);
-      //   },
-      //   bbox: function(str) {
-      //     var box = geohash.decode_bbox("" + str);
-      //     return {
-      //       minlat: box[0],
-      //       minlng: box[1],
-      //       maxlat: box[2],
-      //       maxlng: box[3]
-      //     };
-      //   },
-      //   layers: function(currentHash, zoom) {
-      //     var layers = {};
-      //     layers[""] = true;
-      //     for (var x = 1; x < 7; x++) {
-      //       if (zoom >= x * 3 && zoom < (x + 2) * 3) {
-      //         layers["" + currentHash.substr(0, x)] = true;
-      //       }
-      //     }
-      //     return layers;
-      //   },
-      //   labels: function(hash) {
-      //     return {
-      //       long: hash,
-      //       short: hash.substr(-1, 1)
-      //     };
-      //   }
-      // };
 
       var currentHash;
       var adapter = quadAdapter;
@@ -464,7 +392,7 @@ export default {
 
       var mousePositionEvent = null;
 
-      var generateCurrentHash = function(precision) {
+     function generateCurrentHash(precision) {
         var center = map.getCenter();
 
         if (mousePositionEvent) {
@@ -473,23 +401,16 @@ export default {
         }
 
         return adapter.encode(center, precision);
-      };
+      }
 
       var prevHash = "NOTAHASH";
-      var changeHashFunction = function(algorithm) {
+      function changeHashFunction(algorithm) {
         // if (algorithm == "geohash") adapter = hashAdapter;
         if (algorithm == "slippy") adapter = slippyAdapter;
         else adapter = quadAdapter;
         prevHash = "NOTAHASH"; // force hash to regenerate
         updateLayer();
-      };
-
-      // 0 : 1 char
-      // 3 : 2 chars
-      // 6 : 3 chars
-      // var zoomToHashChars = function(zoom) {
-      //   return 1 + Math.floor(zoom / 3);
-      // };
+      }
 
       function updateLayer() {
         var zoom = map.getZoom();
@@ -539,6 +460,7 @@ export default {
           var marker = new L.marker(poly.getBounds().getNorthWest(), {
             opacity: 0.0001
           });
+          console.log("marker", marker);
           marker.bindTooltip(labels.long, labelConfig);
           marker.addTo(layerGroup);
         }
@@ -548,6 +470,8 @@ export default {
           var marker2 = new L.marker(poly.getBounds().getCenter(), {
             opacity: 0.0001
           });
+          console.log("marker2", marker2);
+          
           marker2.bindTooltip(labels.short, labelConfig2);
           marker2.addTo(layerGroup);
         }
@@ -602,5 +526,22 @@ html {
 }
 #l-map {
   height: 100%;
+}
+#refreshButton {
+  position: absolute;
+  top: 290px;
+  right: 20px;
+  padding: 10px;
+  z-index: 500;
+}
+.my-label {
+  color: white;
+  background-color: rgba( 255, 0, 0, 0.5 );
+}
+
+.my-label2 {
+  font-size: 30px;
+  color: rgba( 255, 0, 0, 0.5 );
+  background-color: transparent;
 }
 </style>
