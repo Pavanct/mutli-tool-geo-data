@@ -524,6 +524,7 @@ export default {
       }
 
       function drawRect(bounds, hash, showDigit) {
+        // console.log("////", bounds, hash, showDigit);
         // console.log('draw');
 
         // http://leafletjs.com/reference.html#path-options
@@ -538,7 +539,7 @@ export default {
           var marker = new L.marker(poly.getBounds().getNorthWest(), {
             opacity: 0.0001
           });
-          marker.bindLabel(labels.long, labelConfig);
+          marker.bindTooltip(labels.long, labelConfig);
           marker.addTo(layerGroup);
         }
 
@@ -547,7 +548,7 @@ export default {
           var marker2 = new L.marker(poly.getBounds().getCenter(), {
             opacity: 0.0001
           });
-          marker2.bindLabel(labels.short, labelConfig2);
+          marker2.bindTooltip(labels.short, labelConfig2);
           marker2.addTo(layerGroup);
         }
       }
