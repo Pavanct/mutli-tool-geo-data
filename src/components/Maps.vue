@@ -251,10 +251,15 @@ export default {
         editableLayers.addLayer(layer);
       });
       L.GridLayer.DebugCoords = L.GridLayer.extend({
-        createTile: function(coords) {
+        createTile: function(coords, done) {
           var tile = document.createElement("div");
           tile.innerHTML = [coords.x, coords.y, coords.z].join(", ");
           tile.style.outline = "1px solid red";
+
+          setTimeout(function() {
+            done(null, tile); // Syntax is 'done(error, tile)'
+          }, 500 + Math.random() * 1500);
+
           return tile;
         }
       });
