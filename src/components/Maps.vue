@@ -201,7 +201,7 @@ export default {
       //   }
 
       //   drawnItems1.addLayer(layer);
-      // });  
+      // });
 
       var drawnItems = new L.FeatureGroup();
       map.addLayer(drawnItems);
@@ -246,11 +246,24 @@ export default {
         // if (type === "rectangle") {
         //   layer.bindPopup("LatLng: " + layer.getLatLng()).openPopup();
         // }
-        
 
         // Do whatever else you need to. (save to db, add to map etc)
         editableLayers.addLayer(layer);
       });
+      L.GridLayer.DebugCoords = L.GridLayer.extend({
+        createTile: function(coords) {
+          var tile = document.createElement("div");
+          tile.innerHTML = [coords.x, coords.y, coords.z].join(", ");
+          tile.style.outline = "1px solid red";
+          return tile;
+        }
+      });
+
+      L.gridLayer.debugCoords = function(opts) {
+        return new L.GridLayer.DebugCoords(opts);
+      };
+
+      map.addLayer(L.gridLayer.debugCoords());
     });
   }
 };
