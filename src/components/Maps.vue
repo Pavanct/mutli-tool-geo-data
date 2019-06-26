@@ -245,7 +245,8 @@ export default {
         className: "my-label",
         direction: "right",
         offset: [5, 5],
-        zoomAnimation: true
+        zoomAnimation: true,
+        permanent: true
       };
 
       var labelConfig2 = {
@@ -253,7 +254,8 @@ export default {
         className: "my-label2",
         direction: "right",
         offset: [-15, -10],
-        zoomAnimation: true
+        zoomAnimation: true,
+        permanent: true
       };
 
       var rectStyle = {
@@ -390,7 +392,7 @@ export default {
 
       var mousePositionEvent = null;
 
-      var generateCurrentHash = function(precision) {
+     function generateCurrentHash(precision) {
         var center = map.getCenter();
 
         if (mousePositionEvent) {
@@ -399,7 +401,7 @@ export default {
         }
 
         return adapter.encode(center, precision);
-      };
+      }
 
       var prevHash = "NOTAHASH";
       function changeHashFunction(algorithm) {
@@ -458,6 +460,7 @@ export default {
           var marker = new L.marker(poly.getBounds().getNorthWest(), {
             opacity: 0.0001
           });
+          console.log("marker", marker);
           marker.bindTooltip(labels.long, labelConfig);
           marker.addTo(layerGroup);
         }
@@ -467,6 +470,8 @@ export default {
           var marker2 = new L.marker(poly.getBounds().getCenter(), {
             opacity: 0.0001
           });
+          console.log("marker2", marker2);
+          
           marker2.bindTooltip(labels.short, labelConfig2);
           marker2.addTo(layerGroup);
         }
@@ -528,5 +533,15 @@ html {
   right: 20px;
   padding: 10px;
   z-index: 500;
+}
+.my-label {
+  color: white;
+  background-color: rgba( 255, 0, 0, 0.5 );
+}
+
+.my-label2 {
+  font-size: 30px;
+  color: rgba( 255, 0, 0, 0.5 );
+  background-color: transparent;
 }
 </style>
