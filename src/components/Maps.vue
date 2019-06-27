@@ -47,9 +47,7 @@
         </l-tooltip>
       </l-marker>-->
     </l-map>
-    <button id="refreshButton" v-on:click="changeHashFunction('quadtree')">
-        Switch
-      </button>
+    <button id="refreshButton" v-on:click="changeHashFunction('quadtree')">Switch</button>
   </div>
 </template>
 
@@ -237,8 +235,6 @@ export default {
         // Do whatever else you need to. (save to db, add to map etc)
         editableLayers.addLayer(layer);
       });
-      
-
 
       var labelConfig = {
         noHide: true,
@@ -256,6 +252,15 @@ export default {
         offset: [-15, 25],
         zoomAnimation: true,
         permanent: true
+      };
+
+      var labelConfig3 = {
+        noHide: true,
+        className: "my-label2",
+        direction: "right",
+        offset: [-15, 25],
+        zoomAnimation: true,
+        permanent: false
       };
 
       var rectStyle = {
@@ -385,14 +390,13 @@ export default {
         return quadKey.join("");
       }
 
-
       var currentHash;
       var adapter = quadAdapter;
       // var adapter = hashAdapter;
 
       var mousePositionEvent = null;
 
-     function generateCurrentHash(precision) {
+      function generateCurrentHash(precision) {
         var center = map.getCenter();
 
         if (mousePositionEvent) {
@@ -460,7 +464,7 @@ export default {
           var marker = new L.marker(poly.getBounds().getNorthWest(), {
             opacity: 0.0001
           });
-          console.log("marker", marker);
+          //console.log("marker", marker);
           marker.bindTooltip(labels.long, labelConfig);
           marker.addTo(layerGroup);
         }
@@ -470,8 +474,8 @@ export default {
           var marker2 = new L.marker(poly.getBounds().getCenter(), {
             opacity: 0.0001
           });
-          console.log("marker2", marker2);
-          
+          //console.log("marker2", marker2);
+
           marker2.bindTooltip(labels.short, labelConfig2);
           marker2.addTo(layerGroup);
         }
@@ -537,12 +541,12 @@ html {
 .my-label {
   font-size: 10px;
   color: white;
-  background-color: rgba( 255, 0, 0, 0.5 );
+  background-color: rgba(255, 0, 0, 0.5);
 }
 
 .my-label2 {
   font-size: 30px;
-  color: rgba( 255, 0, 0, 0.5 );
+  color: rgba(255, 0, 0, 0.5);
   background-color: transparent;
 }
 </style>
