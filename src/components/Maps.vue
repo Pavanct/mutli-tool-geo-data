@@ -244,7 +244,7 @@ export default {
         noHide: true,
         className: "my-label",
         direction: "right",
-        offset: [5, 5],
+        offset: [5, 50],
         zoomAnimation: true,
         permanent: true
       };
@@ -253,7 +253,7 @@ export default {
         noHide: true,
         className: "my-label2",
         direction: "right",
-        offset: [-15, -10],
+        offset: [-15, 25],
         zoomAnimation: true,
         permanent: true
       };
@@ -535,6 +535,7 @@ html {
   z-index: 500;
 }
 .my-label {
+  font-size: 10px;
   color: white;
   background-color: rgba( 255, 0, 0, 0.5 );
 }
