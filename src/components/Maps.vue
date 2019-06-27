@@ -406,7 +406,7 @@ export default {
 
         return adapter.encode(center, precision);
       }
-
+      var type = "slippy";
       var prevHash = "NOTAHASH";
       function changeHashFunction(algorithm) {
         // if (algorithm == "geohash") adapter = hashAdapter;
@@ -414,6 +414,7 @@ export default {
         else adapter = quadAdapter;
         prevHash = "NOTAHASH"; // force hash to regenerate
         updateLayer();
+        type = algorithm;
       }
 
       function updateLayer() {
@@ -449,7 +450,7 @@ export default {
       }
 
       function drawRect(bounds, hash, showDigit) {
-        // console.log("////", bounds, hash, showDigit);
+        //console.log("////", bounds, hash, showDigit);
         // console.log('draw');
 
         // http://leafletjs.com/reference.html#path-options
@@ -470,15 +471,39 @@ export default {
         }
 
         // large single digit marker
-        if (showDigit) {
+        // if (showDigit) {
+        //   var marker2 = new L.marker(poly.getBounds().getCenter(), {
+        //     opacity: 0.0001
+        //   });
+        //   //console.log("marker2", marker2);
+
+        //   marker2.bindTooltip(labels.short, labelConfig2);
+        //   marker2.addTo(layerGroup);
+        // }
+        //console.log("type***",type);
+        if (type === "slippy") {
+          console.log("wtf", type)
+          if (showDigit) {
           var marker2 = new L.marker(poly.getBounds().getCenter(), {
             opacity: 0.0001
           });
           //console.log("marker2", marker2);
 
-          marker2.bindTooltip(labels.short, labelConfig2);
+          marker2.bindTooltip(labels.short, labelConfig3);
           marker2.addTo(layerGroup);
         }
+        } else {
+          if (showDigit) {
+          var marker3 = new L.marker(poly.getBounds().getCenter(), {
+            opacity: 0.0001
+          });
+          //console.log("marker2", marker2);
+
+          marker3.bindTooltip(labels.short, labelConfig2);
+          marker3.addTo(layerGroup);
+        }
+        }
+        
       }
 
       function drawLayer(prefix, showDigit) {
