@@ -450,9 +450,6 @@ export default {
       }
 
       function drawRect(bounds, hash, showDigit) {
-        //console.log("////", bounds, hash, showDigit);
-        // console.log('draw');
-
         // http://leafletjs.com/reference.html#path-options
         var poly = L.rectangle(bounds, rectStyle);
         poly.addTo(layerGroup);
@@ -470,43 +467,37 @@ export default {
           marker.addTo(layerGroup);
         }
 
-        // large single digit marker
-        // if (showDigit) {
-        //   var marker2 = new L.marker(poly.getBounds().getCenter(), {
-        //     opacity: 0.0001
-        //   });
-        //   //console.log("marker2", marker2);
-
-        //   marker2.bindTooltip(labels.short, labelConfig2);
-        //   marker2.addTo(layerGroup);
-        // }
-        //console.log("type***",type);
         if (type === "slippy") {
-          console.log("wtf", type)
+          // console.log("wtf", type)
           if (showDigit) {
-          var marker2 = new L.marker(poly.getBounds().getCenter(), {
-            opacity: 0.0001
-          });
-          //console.log("marker2", marker2);
+            var marker2 = new L.marker(poly.getBounds().getCenter(), {
+              opacity: 0.0001
+            });
+            //console.log("marker2", marker2);
 
-          marker2.bindTooltip(labels.short, labelConfig3);
-          marker2.addTo(layerGroup);
-        }
+            marker2.bindTooltip(labels.short, labelConfig3);
+            // console.log("#####",labels.long);
+            marker2.addTo(layerGroup);
+          }
         } else {
           if (showDigit) {
-          var marker3 = new L.marker(poly.getBounds().getCenter(), {
-            opacity: 0.0001
-          });
-          //console.log("marker2", marker2);
-
-          marker3.bindTooltip(labels.short, labelConfig2);
-          marker3.addTo(layerGroup);
+            var marker3 = new L.marker(poly.getBounds().getCenter(), {
+              opacity: 0.0001
+            });
+            // map.on("click", function(e){
+            //   mousePositionEvent = e;
+            //   console.log(e);
+            // })
+            marker3.bindTooltip(labels.short, labelConfig2);
+            marker3.addTo(layerGroup);
+          }
         }
-        }
-        
       }
 
+      
+
       function drawLayer(prefix, showDigit) {
+        var labelArray = new Array;
         adapter.range.forEach(function(n) {
           var hash = "" + prefix + n;
           var bbox = adapter.bbox(hash);
@@ -521,8 +512,16 @@ export default {
           // console.log( bounds );
 
           drawRect(bounds, hash, showDigit);
+          // labelArray.push(l1);
         });
+        //console.log(labelArray);
+        // return labelArray;
       }
+
+      // getCurrentLabels
+      // function getCurrentLabels(){
+      //   console.log("currentlabels");
+      // }
 
       // update on changes
       map.on("zoomend", updateLayer);
@@ -536,6 +535,28 @@ export default {
         mousePositionEvent = e;
         updateLayer();
       });
+
+      // todo
+      map.on("click", function(e){
+        var zoom = map.getZoom();
+        mousePositionEvent = e;
+        console.log(e.latlng);
+        var hashLength = zoom + 1;  
+        var currenthash = generateCurrentHash(hashLength);
+        var hashPrefix = currentHash.substr(0, hashLength);
+        var layers = adapter.layers(currenthash, zoom);
+       if (prevHash != hashPrefix) {
+          // console.log( 'zoom', zoom );
+          layerGroup.clearLayers();
+
+          var layers = adapter.layers(currentHash, zoom);
+          for (var attr in layers) {
+            drawLayer(attr, layers[attr]);
+          }
+        }
+        prevHash = hashPrefix;  
+        console.log(layers);             
+      })
     });
   }
 };
