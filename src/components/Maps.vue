@@ -21,33 +21,9 @@
         :token="token"
         layer-type="base"
       />
-      <!-- <l-grid-layer :tile-component="tileComponent"></l-grid-layer> -->
-      <!-- <l-marker :lat-lng="withPopup">
-        <l-popup>
-          <div @click="innerClick">
-            I am a popup
-            <p v-show="showParagraph">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque
-              sed pretium nisl, ut sagittis sapien. Sed vel sollicitudin nisi.
-              Donec finibus semper metus id malesuada.
-            </p>
-          </div>
-        </l-popup>
-      </l-marker>-->
-      <!-- <l-marker :lat-lng="withTooltip">
-        <l-tooltip :options="{ permanent: true, interactive: true }">
-          <div @click="innerClick">
-            I am a tooltip
-            <p v-show="showParagraph">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque
-              sed pretium nisl, ut sagittis sapien. Sed vel sollicitudin nisi.
-              Donec finibus semper metus id malesuada.
-            </p>
-          </div>
-        </l-tooltip>
-      </l-marker>-->
     </l-map>
-    <button id="refreshButton" v-on:click="changeHashFunction('quadtree')">Switch</button>
+    <button id="refreshButton" @click.native="changeHashFunction('slippy')">Switch</button>
+    
   </div>
 </template>
 
@@ -408,6 +384,7 @@ export default {
       }
       var type = "slippy";
       var prevHash = "NOTAHASH";
+      //changehashfunction
       function changeHashFunction(algorithm) {
         // if (algorithm == "geohash") adapter = hashAdapter;
         if (algorithm == "slippy") adapter = slippyAdapter;
@@ -454,7 +431,7 @@ export default {
       function getLabels() {
         var zoom = map.getZoom();
         var hashLength = zoom + 1;
-        var labelarray = new Array;
+        var labelarray = new Array();
         // update current hash
         currentHash = generateCurrentHash(hashLength);
 
@@ -465,8 +442,8 @@ export default {
         var hashPrefix = currentHash.substr(0, hashLength);
 
         // console.log( 'zoom', zoom );
-        console.log( 'prevHash', prevHash );
-        console.log( 'hashPrefix', hashPrefix );
+        console.log("prevHash", prevHash);
+        console.log("hashPrefix", hashPrefix);
 
         // performance tweak
         // @todo: not that performant?
@@ -477,10 +454,9 @@ export default {
           var layers = adapter.layers(currentHash, zoom);
           for (var attr in layers) {
             // console.log(attr);
-          var arr3 =  getLayer(attr, layers[attr]);
-          labelarray.push(arr3);
+            var arr3 = getLayer(attr, layers[attr]);
+            labelarray.push(arr3);
           }
-          
         }
         // console.log("layers",layers);
         // console.log(labelarray);
@@ -490,7 +466,7 @@ export default {
 
       //getLayer
       function getLayer(prefix, showDigit) {
-        var arr1 = new Array;
+        var arr1 = new Array();
         // console.log("prefix",prefix);
         adapter.range.forEach(function(n) {
           var hash = "" + prefix + n;
@@ -503,11 +479,11 @@ export default {
 
           // console.log( hash );
           // console.log( bbox );
-           
+
           // console.log( bounds );
 
-        var arr2 = getRect(bounds, hash, showDigit);
-        arr1.push(arr2);
+          var arr2 = getRect(bounds, hash, showDigit);
+          arr1.push(arr2);
         });
         console.log("array of lables", arr1);
         return arr1;
@@ -522,7 +498,7 @@ export default {
 
         // generate labels
         var labels = adapter.labels(hash);
-         
+
         // full (long) hash marker
         if (labels.long.length > 1) {
           var marker = new L.marker(poly.getBounds().getNorthWest(), {
@@ -567,7 +543,7 @@ export default {
         // generate labels
         var labels = adapter.labels(hash);
         //on click print labels.long
-         
+
         // full (long) hash marker
         if (labels.long.length > 1) {
           var marker = new L.marker(poly.getBounds().getNorthWest(), {
@@ -604,7 +580,6 @@ export default {
         }
       }
 
-      
       //generate hash and bounds
       function drawLayer(prefix, showDigit) {
         adapter.range.forEach(function(n) {
@@ -618,12 +593,11 @@ export default {
 
           // console.log( hash );
           // console.log( bbox );
-           
+
           // console.log( bounds );
 
           drawRect(bounds, hash, showDigit);
         });
-        
       }
 
       // update on changes
@@ -640,18 +614,17 @@ export default {
       });
 
       // todo
-      map.on("click", function(e){
+      map.on("click", function(e) {
         // var zoom = map.getZoom();
         mousePositionEvent = e;
-        var labels =  getLabels();
-        console.log("labels",labels);
-        var long = new Array;
+        var labels = getLabels();
+        console.log("labels", labels);
+        var long = new Array();
         labels[2].forEach(element => {
           long.push(element.long);
         });
-        console.log("labels long",long);
-                     
-      })
+        console.log("labels long", long);
+      });
     });
   }
 };
@@ -676,6 +649,13 @@ html {
   position: absolute;
   top: 290px;
   right: 20px;
+  padding: 10px;
+  z-index: 500;
+}
+#card {
+  position: absolute;
+  bottom: 100px;
+  right: 120px;
   padding: 10px;
   z-index: 500;
 }
