@@ -22,8 +22,22 @@
         layer-type="base"
       />
     </l-map>
-    <button id="refreshButton" @click.native="changeHashFunction('slippy')">Switch</button>
-    
+    <!-- <button id="refreshButton" @click="changeHashFunction('slippy')">Switch</button> -->
+    <button id="refreshButton" @click="mapDraw">Draw</button>
+  
+    <!-- TODO Copy to Clipboard
+       <div></div> -->
+    <!-- <b-card bg-variant="light" header="labels" class="text-center" id="card">
+        <span v-for="(long, index) in labelarray1" v-bind:key="long">
+    <span>{{long}}</span><span v-if="index+1 < labelarray1.length">, </span>
+  </span>
+    </b-card> -->
+    <b-card bg-variant="light" header="labels" class="text-center" id="card">
+        <div v-for="item1 in labelarray1" v-bind:key="item1">
+      <span>{{ item1 }}</span>
+    </div>
+
+    </b-card>
   </div>
 </template>
 
@@ -46,23 +60,11 @@ export default {
   components: {
     LMap,
     LTileLayer
-    // LMarker,
-    // LPopup,
-    // LTooltip,
-    // LGridLayer
   },
-  // tileComponent: {
-  //   name: "tile-component",
-  //   props: {
-  //     coords: {
-  //       type: Object,
-  //       required: true
-  //     }
-  //   },
-  //   template: "<div>Coords: {{coords.x}}, {{coords.y}}, {{coords.z}}</div>"
-  // },
+  
   data() {
     return {
+      labelarray1: ["no data"],
       zoom: 13,
       center: latLng(52.5138587, 13.3187443),
       url:
@@ -145,10 +147,9 @@ export default {
     },
     innerClick() {
       alert("Click!");
-    }
-  },
-  mounted() {
-    this.$nextTick(() => {
+    },
+    mapDraw(){
+      this.$nextTick(() => {
       const map = this.$refs.map.mapObject;
       const drawControl = new L.Control.Draw({
         position: "topright",
@@ -624,8 +625,14 @@ export default {
           long.push(element.long);
         });
         console.log("labels long", long);
+        this.labelarray1 = long;
+        console.log(this.labelarray1);
       });
     });
+    }
+  },
+  mounted() {
+    
   }
 };
 </script>
@@ -654,8 +661,8 @@ html {
 }
 #card {
   position: absolute;
-  bottom: 100px;
-  right: 120px;
+  bottom: 80px;
+  margin-left: 47%;
   padding: 10px;
   z-index: 500;
 }

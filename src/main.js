@@ -1,9 +1,14 @@
+import '@babel/polyfill'
+import 'mutationobserver-shim'
 import Vue from 'vue'
+import './plugins/bootstrap-vue'
 import App from './App.vue'
 import * as Vue2Leaflet from 'vue2-leaflet';
 import { Icon } from 'leaflet'
 import "leaflet/dist/leaflet.css"
-
+import VueClipboard from 'vue-clipboard2'
+ 
+Vue.use(VueClipboard)
 
 Vue.component('l-map', Vue2Leaflet.LMap);
 Vue.component('l-tile-layer', Vue2Leaflet.LTileLayer);
