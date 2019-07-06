@@ -442,6 +442,7 @@ export default {
 
           var layers = adapter.layers(currentHash, zoom);
           for (var attr in layers) {
+            // console.log(attr);
             drawLayer(attr, layers[attr]);
           }
         }
@@ -449,14 +450,124 @@ export default {
         prevHash = hashPrefix;
       }
 
+      //getLabels
+      function getLabels() {
+        var zoom = map.getZoom();
+        var hashLength = zoom + 1;
+        var labelarray = new Array;
+        // update current hash
+        currentHash = generateCurrentHash(hashLength);
+
+        // if (adapter === hashAdapter) {
+        //   hashLength = zoomToHashChars(zoom);
+        // }
+
+        var hashPrefix = currentHash.substr(0, hashLength);
+
+        // console.log( 'zoom', zoom );
+        console.log( 'prevHash', prevHash );
+        console.log( 'hashPrefix', hashPrefix );
+
+        // performance tweak
+        // @todo: not that performant?
+        if (prevHash == hashPrefix) {
+          // console.log( 'zoom', zoom );
+          layerGroup.clearLayers();
+
+          var layers = adapter.layers(currentHash, zoom);
+          for (var attr in layers) {
+            // console.log(attr);
+          var arr3 =  getLayer(attr, layers[attr]);
+          labelarray.push(arr3);
+          }
+          
+        }
+        // console.log("layers",layers);
+        // console.log(labelarray);
+        prevHash = hashPrefix;
+        return labelarray;
+      }
+
+      //getLayer
+      function getLayer(prefix, showDigit) {
+        var arr1 = new Array;
+        // console.log("prefix",prefix);
+        adapter.range.forEach(function(n) {
+          var hash = "" + prefix + n;
+          var bbox = adapter.bbox(hash);
+
+          var bounds = L.latLngBounds(
+            L.latLng(bbox.maxlat, bbox.minlng),
+            L.latLng(bbox.minlat, bbox.maxlng)
+          );
+
+          // console.log( hash );
+          // console.log( bbox );
+           
+          // console.log( bounds );
+
+        var arr2 = getRect(bounds, hash, showDigit);
+        arr1.push(arr2);
+        });
+        console.log("array of lables", arr1);
+        return arr1;
+      }
+
+      //drawRect
+      function getRect(bounds, hash, showDigit) {
+        // http://leafletjs.com/reference.html#path-options
+        var poly = L.rectangle(bounds, rectStyle);
+        // console.log("bounds",bounds);
+        // poly.addTo(layerGroup);
+
+        // generate labels
+        var labels = adapter.labels(hash);
+         
+        // full (long) hash marker
+        if (labels.long.length > 1) {
+          var marker = new L.marker(poly.getBounds().getNorthWest(), {
+            opacity: 0.0001
+          });
+          // console.log("labelslong", labels.long);
+          marker.bindTooltip(labels.long, labelConfig);
+          // marker.addTo(layerGroup);
+        }
+
+        if (type === "slippy") {
+          if (showDigit) {
+            var marker2 = new L.marker(poly.getBounds().getCenter(), {
+              opacity: 0.0001
+            });
+            //console.log("marker2", marker2);
+
+            marker2.bindTooltip(labels.short, labelConfig3);
+            // console.log("#####",labels.long);
+            // marker2.addTo(layerGroup);
+          }
+        } else {
+          if (showDigit) {
+            var marker3 = new L.marker(poly.getBounds().getCenter(), {
+              opacity: 0.0001
+            });
+            // console.log("labelsshort", labels.short);
+            marker3.bindTooltip(labels.short, labelConfig2);
+            // marker3.addTo(layerGroup);
+          }
+        }
+        return labels;
+      }
+
+      //draw rectangle
       function drawRect(bounds, hash, showDigit) {
         // http://leafletjs.com/reference.html#path-options
         var poly = L.rectangle(bounds, rectStyle);
+        // console.log("bounds",bounds);
         poly.addTo(layerGroup);
 
         // generate labels
         var labels = adapter.labels(hash);
-
+        //on click print labels.long
+         
         // full (long) hash marker
         if (labels.long.length > 1) {
           var marker = new L.marker(poly.getBounds().getNorthWest(), {
@@ -468,7 +579,6 @@ export default {
         }
 
         if (type === "slippy") {
-          // console.log("wtf", type)
           if (showDigit) {
             var marker2 = new L.marker(poly.getBounds().getCenter(), {
               opacity: 0.0001
@@ -495,9 +605,8 @@ export default {
       }
 
       
-
+      //generate hash and bounds
       function drawLayer(prefix, showDigit) {
-        var labelArray = new Array;
         adapter.range.forEach(function(n) {
           var hash = "" + prefix + n;
           var bbox = adapter.bbox(hash);
@@ -509,19 +618,13 @@ export default {
 
           // console.log( hash );
           // console.log( bbox );
+           
           // console.log( bounds );
 
           drawRect(bounds, hash, showDigit);
-          // labelArray.push(l1);
         });
-        //console.log(labelArray);
-        // return labelArray;
+        
       }
-
-      // getCurrentLabels
-      // function getCurrentLabels(){
-      //   console.log("currentlabels");
-      // }
 
       // update on changes
       map.on("zoomend", updateLayer);
@@ -538,24 +641,16 @@ export default {
 
       // todo
       map.on("click", function(e){
-        var zoom = map.getZoom();
+        // var zoom = map.getZoom();
         mousePositionEvent = e;
-        console.log(e.latlng);
-        var hashLength = zoom + 1;  
-        var currenthash = generateCurrentHash(hashLength);
-        var hashPrefix = currentHash.substr(0, hashLength);
-        var layers = adapter.layers(currenthash, zoom);
-       if (prevHash != hashPrefix) {
-          // console.log( 'zoom', zoom );
-          layerGroup.clearLayers();
-
-          var layers = adapter.layers(currentHash, zoom);
-          for (var attr in layers) {
-            drawLayer(attr, layers[attr]);
-          }
-        }
-        prevHash = hashPrefix;  
-        console.log(layers);             
+        var labels =  getLabels();
+        console.log("labels",labels);
+        var long = new Array;
+        labels[2].forEach(element => {
+          long.push(element.long);
+        });
+        console.log("labels long",long);
+                     
       })
     });
   }
