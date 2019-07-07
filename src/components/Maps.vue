@@ -22,22 +22,17 @@
         layer-type="base"
       />
     </l-map>
-    <!-- <button id="refreshButton" @click="changeHashFunction('slippy')">Switch</button> -->
-    <button id="refreshButton" @click="mapDraw">Draw</button>
-  
-    <!-- TODO Copy to Clipboard
-       <div></div> -->
-    <!-- <b-card bg-variant="light" header="labels" class="text-center" id="card">
-        <span v-for="(long, index) in labelarray1" v-bind:key="long">
-    <span>{{long}}</span><span v-if="index+1 < labelarray1.length">, </span>
-  </span>
-    </b-card> -->
-    <b-card bg-variant="light" header="labels" class="text-center" id="card">
-        <div v-for="item1 in labelarray1" v-bind:key="item1">
-      <span>{{ item1 }}</span>
-    </div>
+    <button id="refreshButton" @click="changeHashFunction('slippy')">Slippy</button>
+    <button id="quad" @click="changeHashFunction('quadtree')">Quad</button>
+    <button id="draw" @click="mapDraw">Draw</button>
 
-    </b-card>
+    <!-- TODO Copy to Clipboard
+    <div></div>-->
+    <!-- <b-card bg-variant="light" header="labels" class="text-center" id="card">
+      <div v-for="item1 in labelarray1" v-bind:key="item1">
+        <span>{{ item1 }}</span>
+      </div>
+    </b-card> -->
   </div>
 </template>
 
@@ -61,7 +56,7 @@ export default {
     LMap,
     LTileLayer
   },
-  
+
   data() {
     return {
       labelarray1: ["no data"],
@@ -136,6 +131,11 @@ export default {
     };
   },
   methods: {
+    changeHashFunction(type) {
+      console.log("adaptertype", type);
+      this.mapDraw(type);
+     
+    },
     zoomUpdate(zoom) {
       this.currentZoom = zoom;
     },
@@ -148,70 +148,71 @@ export default {
     innerClick() {
       alert("Click!");
     },
-    mapDraw(){
-      this.$nextTick(() => {
+    mapDraw(type) {
+      // this.$nextTick(() => {
       const map = this.$refs.map.mapObject;
-      const drawControl = new L.Control.Draw({
-        position: "topright",
-        draw: {
-          polyline: {
-            allowIntersection: false,
-            showArea: true
-          },
-          polygon: true,
-          rectangle: true,
-          circle: true,
-          marker: true
-        }
-      });
+      // const drawControl = new L.Control.Draw({
+      //   position: "topright",
+      //   draw: {
+      //     polyline: {
+      //       allowIntersection: false,
+      //       showArea: true
+      //     },
+      //     polygon: true,
+      //     rectangle: true,
+      //     circle: true,
+      //     marker: true
+      //   }
+      // });
 
-      var drawnItems = new L.FeatureGroup();
-      map.addLayer(drawnItems);
+      // var drawnItems = new L.FeatureGroup();
+      // map.addLayer(drawnItems);
 
-      map.on("draw:created", function(e) {
-        var type = e.layerType,
-          layer = e.layer;
+      // map.on("draw:created", function(e) {
+      //   var type = e.layerType,
+      //     layer = e.layer;
 
-        if (type === "rectangle") {
-          layer.on("mouseover", function() {
-            alert(layer.getLatLngs());
-          });
-        }
+      //   if (type === "rectangle") {
+      //     layer.on("mouseover", function() {
+      //       alert(layer.getLatLngs());
+      //     });
+      //   }
 
-        if (type === "polygon") {
-          layer.on("mouseover", function() {
-            alert(layer.getLatLngs());
-          });
-        }
+      //   if (type === "polygon") {
+      //     layer.on("mouseover", function() {
+      //       alert(layer.getLatLngs());
+      //     });
+      //   }
 
-        if (type === "polyline") {
-          layer.on("mouseover", function() {
-            alert(layer.getLatLngs());
-          });
-        }
+      //   if (type === "polyline") {
+      //     layer.on("mouseover", function() {
+      //       alert(layer.getLatLngs());
+      //     });
+      //   }
 
-        drawnItems.addLayer(layer);
-      });
+      //   drawnItems.addLayer(layer);
+      // });
 
-      map.addControl(drawControl);
+      // map.addControl(drawControl);
 
-      const editableLayers = new L.FeatureGroup().addTo(map);
-      map.on(L.Draw.Event.CREATED, e => {
-        // const type = e.layerType;
-        const layer = e.layer;
-        var type = e.layerType;
+      // const editableLayers = new L.FeatureGroup().addTo(map);
+      // map.on(L.Draw.Event.CREATED, e => {
+      //   // const type = e.layerType;
+      //   const layer = e.layer;
+      //   var type = e.layerType;
 
-        if (type === "marker") {
-          layer.bindPopup("LatLng: " + layer.getLatLng()).openPopup();
-        }
+      //   if (type === "marker") {
+      //     layer.bindPopup("LatLng: " + layer.getLatLng()).openPopup();
+      //   }
 
-        // if (type === "rectangle") {
-        //   layer.bindPopup("LatLng: " + layer.getLatLng()).openPopup();
-        // }
+      //   // if (type === "rectangle") {
+      //   //   layer.bindPopup("LatLng: " + layer.getLatLng()).openPopup();
+      //   // }
 
-        // Do whatever else you need to. (save to db, add to map etc)
-        editableLayers.addLayer(layer);
-      });
+      //   // Do whatever else you need to. (save to db, add to map etc)
+      //   editableLayers.addLayer(layer);
+      // });
+
 
       var labelConfig = {
         noHide: true,
@@ -383,14 +384,21 @@ export default {
 
         return adapter.encode(center, precision);
       }
-      var type = "slippy";
+      // var type = "slippy";
+      // var type = "";
       var prevHash = "NOTAHASH";
+      
       //changehashfunction
       function changeHashFunction(algorithm) {
-        // if (algorithm == "geohash") adapter = hashAdapter;
+        
+        console.log("alg", algorithm);
+        
+        // map.removeLayer(grayscale)
         if (algorithm == "slippy") adapter = slippyAdapter;
         else adapter = quadAdapter;
         prevHash = "NOTAHASH"; // force hash to regenerate
+        
+        // map.removeLayer(layerGroup);
         updateLayer();
         type = algorithm;
       }
@@ -606,7 +614,7 @@ export default {
       map.on("moveend", updateLayer);
 
       // init
-      changeHashFunction("quadtree");
+      changeHashFunction(type);
       // updateLayer();
 
       map.on("mousemove", function(e) {
@@ -627,12 +635,75 @@ export default {
         console.log("labels long", long);
         this.labelarray1 = long;
         console.log(this.labelarray1);
+        // TODO make it a modal or copy to clipboard
+        alert(this.labelarray1);
       });
-    });
+      // });
     }
   },
   mounted() {
-    
+    const map = this.$refs.map.mapObject;
+    const drawControl = new L.Control.Draw({
+      position: "topright",
+      draw: {
+        polyline: {
+          allowIntersection: false,
+          showArea: true
+        },
+        polygon: true,
+        rectangle: true,
+        circle: true,
+        marker: true
+      }
+    });
+
+    var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    map.on("draw:created", function(e) {
+      var type = e.layerType,
+        layer = e.layer;
+
+      if (type === "rectangle") {
+        layer.on("mouseover", function() {
+          alert(layer.getLatLngs());
+        });
+      }
+
+      if (type === "polygon") {
+        layer.on("mouseover", function() {
+          alert(layer.getLatLngs());
+        });
+      }
+
+      if (type === "polyline") {
+        layer.on("mouseover", function() {
+          alert(layer.getLatLngs());
+        });
+      }
+
+      drawnItems.addLayer(layer);
+    });
+
+    map.addControl(drawControl);
+
+    const editableLayers = new L.FeatureGroup().addTo(map);
+    map.on(L.Draw.Event.CREATED, e => {
+      // const type = e.layerType;
+      const layer = e.layer;
+      var type = e.layerType;
+
+      if (type === "marker") {
+        layer.bindPopup("LatLng: " + layer.getLatLng()).openPopup();
+      }
+
+      // if (type === "rectangle") {
+      //   layer.bindPopup("LatLng: " + layer.getLatLng()).openPopup();
+      // }
+
+      // Do whatever else you need to. (save to db, add to map etc)
+      editableLayers.addLayer(layer);
+    });
   }
 };
 </script>
@@ -655,6 +726,20 @@ html {
 #refreshButton {
   position: absolute;
   top: 290px;
+  right: 20px;
+  padding: 10px;
+  z-index: 500;
+}
+#draw {
+  position: absolute;
+  top: 350px;
+  right: 20px;
+  padding: 10px;
+  z-index: 500;
+}
+#quad {
+  position: absolute;
+  top: 450px;
   right: 20px;
   padding: 10px;
   z-index: 500;
