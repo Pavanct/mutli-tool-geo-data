@@ -22,7 +22,7 @@
         layer-type="base"
       />
     </l-map>
-    <b-button  class="" id="refreshButton" @click="changeHashFunction('slippy')">Slippy</b-button>
+    <b-button id="slippy" @click="changeHashFunction('slippy')">Slippy</b-button>
     <b-button id="quad" @click="changeHashFunction('quadtree')">Quad</b-button>
     <b-button  id="draw" @click="mapDraw">Draw</b-button>
     <b-button  id="clear" @click="clearMap">Clear</b-button>
@@ -682,6 +682,16 @@ export default {
       var type = e.layerType,
         layer = e.layer;
 
+      if(type === 'circle'){
+        layer.on("click", function(){
+          console.log("circle radius in mts", theRadius);
+        })
+        var theCenterPt = layer.getLatLng();
+        var theRadius = layer.getRadius();
+        var marker = theCenterPt;
+        L.marker(marker).addTo(drawnItems).bindPopup("centre: "+ "<dd>"+ marker + "</dd>" + " radius: "+ theRadius.toFixed(2) + " mts").openPopup();
+      }  
+
       if (type === "rectangle") {
         layer.on("click", function() {
           console.log(layer.getLatLngs());
@@ -701,12 +711,12 @@ export default {
             var distance = 0;
             var  length = layer._latlngs.length;
             var marker0 = layer._latlngs[0];
-            L.marker(marker0).addTo(map).bindTooltip("0 km");
+            L.marker(marker0).addTo(drawnItems).bindTooltip("0 km");
             for (var i = 1; i < length; i++) {
               distance += layer._latlngs[i].distanceTo(layer._latlngs[i - 1]);
               var marker = layer._latlngs[i];
               console.log(marker);
-              L.marker(marker).addTo(map).bindTooltip((distance/1000).toFixed(2) + " km");
+              L.marker(marker).addTo(drawnItems).bindTooltip((distance/1000).toFixed(2) + " km");
               distanceArray.push(distance);
               // layer._latlngs[i].bindTooltip(distance + " km").openPopup();
             }
@@ -774,34 +784,35 @@ html {
 #l-map {
   height: 100%;
 }
-#refreshButton {
+#slippy {
   position: absolute;
   top: 280px;
   right: 20px;
   padding: 10px;
   z-index: 500;
 }
+#quad {
+  position: absolute;
+  top: 330px;
+  right: 20px;
+  padding: 10px;
+  z-index: 500;
+}
 #draw {
   position: absolute;
-  top: 450px;
+  top: 480px;
   right: 20px;
   padding: 10px;
   z-index: 500;
 }
 #clear {
   position: absolute;
-  top: 550px;
+  top: 530px;
   right: 20px;
   padding: 10px;
   z-index: 500;
 }
-#quad {
-  position: absolute;
-  top: 350px;
-  right: 20px;
-  padding: 10px;
-  z-index: 500;
-}
+
 #card {
   position: absolute;
   bottom: 80px;
