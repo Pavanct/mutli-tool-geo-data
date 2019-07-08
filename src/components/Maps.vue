@@ -648,7 +648,8 @@ export default {
       draw: {
         polyline: {
           allowIntersection: false,
-          showArea: true
+          showArea: true,
+          measureControl: true
         },
         polygon: true,
         rectangle: true,
@@ -665,20 +666,25 @@ export default {
         layer = e.layer;
 
       if (type === "rectangle") {
-        layer.on("mouseover", function() {
-          alert(layer.getLatLngs());
+        layer.on("click", function() {
+          console.log(layer.getLatLngs());
         });
       }
 
       if (type === "polygon") {
-        layer.on("mouseover", function() {
-          alert(layer.getLatLngs());
+        layer.on("click", function() {
+          console.log(layer.getLatLngs());
         });
       }
 
       if (type === "polyline") {
         layer.on("mouseover", function() {
-          alert(layer.getLatLngs());
+          console.log(layer);
+          var latlng = layer.getLatLngs();
+          var from = latlng[0];
+          var to = latlng[1];
+          var distance = (from.distanceTo(to)/1000).toFixed(2);
+          layer.bindTooltip("distance: " + distance + " km").openPopup()
         });
       }
 

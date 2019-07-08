@@ -14,6 +14,7 @@
     "leaflet": "^1.5.1",
     "leaflet-draw": "^1.0.4",
     "leaflet.icon.glyph": "0.2.1",
+    "leaflet.measurecontrol": "^1.1.0",
     "vue": "^2.6.10",
     "vue-clipboard2": "^0.3.0",
     "vue2-leaflet": "^2.1.1"
