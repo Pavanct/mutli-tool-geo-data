@@ -32,7 +32,7 @@
       <div v-for="item1 in labelarray1" v-bind:key="item1">
         <span>{{ item1 }}</span>
       </div>
-    </b-card> -->
+    </b-card>-->
   </div>
 </template>
 
@@ -134,7 +134,6 @@ export default {
     changeHashFunction(type) {
       console.log("adaptertype", type);
       this.mapDraw(type);
-     
     },
     zoomUpdate(zoom) {
       this.currentZoom = zoom;
@@ -212,7 +211,6 @@ export default {
       //   // Do whatever else you need to. (save to db, add to map etc)
       //   editableLayers.addLayer(layer);
       // });
-
 
       var labelConfig = {
         noHide: true,
@@ -387,17 +385,16 @@ export default {
       // var type = "slippy";
       // var type = "";
       var prevHash = "NOTAHASH";
-      
+
       //changehashfunction
       function changeHashFunction(algorithm) {
-        
         console.log("alg", algorithm);
-        
+
         // map.removeLayer(grayscale)
         if (algorithm == "slippy") adapter = slippyAdapter;
         else adapter = quadAdapter;
         prevHash = "NOTAHASH"; // force hash to regenerate
-        
+
         // map.removeLayer(layerGroup);
         updateLayer();
         type = algorithm;
@@ -649,7 +646,7 @@ export default {
         polyline: {
           allowIntersection: false,
           showArea: true,
-          measureControl: true
+          measureControl: true,
         },
         polygon: true,
         rectangle: true,
@@ -678,13 +675,38 @@ export default {
       }
 
       if (type === "polyline") {
+        //calculate distance between each points
+         function getDistance() {
+            var distanceArray = new Array;
+            var distance = 0;
+            var  length = layer._latlngs.length;
+            var marker0 = layer._latlngs[0];
+            L.marker(marker0).addTo(map).bindTooltip("0 km");
+            for (var i = 1; i < length; i++) {
+              distance += layer._latlngs[i].distanceTo(layer._latlngs[i - 1]);
+              var marker = layer._latlngs[i];
+              console.log(marker);
+              L.marker(marker).addTo(map).bindTooltip((distance/1000).toFixed(2) + " km").openPopup();
+              distanceArray.push(distance);
+              // layer._latlngs[i].bindTooltip(distance + " km").openPopup();
+            }
+            console.log(distanceArray);
+            // optional
+           
+              return distance / 1000;
+            
+          }
+          var distance = getDistance().toFixed(2);
+          layer.bindTooltip("total distance: "+ distance + " km").openPopup();
         layer.on("mouseover", function() {
-          console.log(layer);
-          var latlng = layer.getLatLngs();
-          var from = latlng[0];
-          var to = latlng[1];
-          var distance = (from.distanceTo(to)/1000).toFixed(2);
-          layer.bindTooltip("distance: " + distance + " km").openPopup()
+          // console.log(layer);
+          // var latlng = layer.getLatLngs();
+          // var from = latlng[0];
+          // var to = latlng[1];
+          // var distance = (from.distanceTo(to) / 1000).toFixed(2);
+          // layer.bindTooltip("distance: " + distance + " km").openPopup();
+          // var distance = layer.getDistance();
+          // layer.bindTooltip("distance: "+ distance + "km").openPopup();
         });
       }
 
