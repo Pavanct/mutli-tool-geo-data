@@ -22,9 +22,11 @@
         layer-type="base"
       />
     </l-map>
-    <button id="refreshButton" @click="changeHashFunction('slippy')">Slippy</button>
-    <button id="quad" @click="changeHashFunction('quadtree')">Quad</button>
-    <button id="draw" @click="mapDraw">Draw</button>
+    <b-button  class="" id="refreshButton" @click="changeHashFunction('slippy')">Slippy</b-button>
+    <b-button id="quad" @click="changeHashFunction('quadtree')">Quad</b-button>
+    <b-button  id="draw" @click="mapDraw">Draw</b-button>
+    <b-button  id="clear" @click="clearMap">Clear</b-button>
+
 
     <!-- TODO Copy to Clipboard
     <div></div>-->
@@ -59,6 +61,9 @@ export default {
 
   data() {
     return {
+      drawnItems: null,
+      editableLayers: null,
+      layerGroup: null,
       labelarray1: ["no data"],
       zoom: 13,
       center: latLng(52.5138587, 13.3187443),
@@ -131,6 +136,18 @@ export default {
     };
   },
   methods: {
+    clearMap(){
+      const map = this.$refs.map.mapObject;
+      if(this.layerGroup !== null){
+      map.removeLayer(this.layerGroup);
+      }
+      if(this.drawnItems !== null){
+      map.removeLayer(this.drawnItems);
+      }
+      if(this.editableLayers !== null){
+      map.removeLayer(this.editableLayers);
+      }
+    },
     changeHashFunction(type) {
       console.log("adaptertype", type);
       this.mapDraw(type);
@@ -623,6 +640,7 @@ export default {
       map.on("click", function(e) {
         // var zoom = map.getZoom();
         mousePositionEvent = e;
+        var marker = e.latlng;
         var labels = getLabels();
         console.log("labels", labels);
         var long = new Array();
@@ -631,11 +649,13 @@ export default {
         });
         console.log("labels long", long);
         this.labelarray1 = long;
-        console.log(this.labelarray1);
+        // console.log(this.labelarray1);
         // TODO make it a modal or copy to clipboard
         alert(this.labelarray1);
+        // L.marker(marker).addTo(map).bindPopup("label Array" + this.labelarray1).openPopup();
       });
       // });
+      this.layerGroup = layerGroup;
     }
   },
   mounted() {
@@ -686,7 +706,7 @@ export default {
               distance += layer._latlngs[i].distanceTo(layer._latlngs[i - 1]);
               var marker = layer._latlngs[i];
               console.log(marker);
-              L.marker(marker).addTo(map).bindTooltip((distance/1000).toFixed(2) + " km").openPopup();
+              L.marker(marker).addTo(map).bindTooltip((distance/1000).toFixed(2) + " km");
               distanceArray.push(distance);
               // layer._latlngs[i].bindTooltip(distance + " km").openPopup();
             }
@@ -697,7 +717,7 @@ export default {
             
           }
           var distance = getDistance().toFixed(2);
-          layer.bindTooltip("total distance: "+ distance + " km").openPopup();
+          layer.bindTooltip("total distance: "+ distance + " km");
         layer.on("mouseover", function() {
           // console.log(layer);
           // var latlng = layer.getLatLngs();
@@ -707,6 +727,7 @@ export default {
           // layer.bindTooltip("distance: " + distance + " km").openPopup();
           // var distance = layer.getDistance();
           // layer.bindTooltip("distance: "+ distance + "km").openPopup();
+          layer.bindPopup("total distance: "+ distance + " km").openPopup();
         });
       }
 
@@ -732,6 +753,8 @@ export default {
       // Do whatever else you need to. (save to db, add to map etc)
       editableLayers.addLayer(layer);
     });
+    this.drawnItems = drawnItems;
+    this.editableLayers = editableLayers;
   }
 };
 </script>
@@ -753,21 +776,28 @@ html {
 }
 #refreshButton {
   position: absolute;
-  top: 290px;
+  top: 280px;
   right: 20px;
   padding: 10px;
   z-index: 500;
 }
 #draw {
   position: absolute;
-  top: 350px;
+  top: 450px;
+  right: 20px;
+  padding: 10px;
+  z-index: 500;
+}
+#clear {
+  position: absolute;
+  top: 550px;
   right: 20px;
   padding: 10px;
   z-index: 500;
 }
 #quad {
   position: absolute;
-  top: 450px;
+  top: 350px;
   right: 20px;
   padding: 10px;
   z-index: 500;
