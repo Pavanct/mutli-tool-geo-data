@@ -24,9 +24,14 @@
     </l-map>
     <b-button id="slippy" @click="changeHashFunction('slippy')">Slippy</b-button>
     <b-button id="quad" @click="changeHashFunction('quadtree')">Quad</b-button>
-    <b-button  id="draw" @click="mapDraw">Draw</b-button>
-    <b-button  id="clear" @click="clearMap">Clear</b-button>
-
+    <b-button id="draw" @click="mapDraw">Draw</b-button>
+    <b-button id="clear" @click="clearMap">Clear</b-button>
+    <div id="card">
+      <b-button v-b-modal.modal-1>Copy</b-button>
+      <b-modal id="modal-1" title="Copy tiles">
+        <p class="my-4">{{ labelarray1 }}</p>
+      </b-modal>
+    </div>
 
     <!-- TODO Copy to Clipboard
     <div></div>-->
@@ -39,6 +44,7 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import { latLng } from "leaflet";
 import {
   LMap,
@@ -51,7 +57,6 @@ import {
 import "leaflet-draw";
 import L from "leaflet";
 import "leaflet-draw/dist/leaflet.draw.css";
-
 export default {
   name: "Maps",
   components: {
@@ -142,42 +147,45 @@ export default {
     };
   },
   methods: {
-    clearMap(){
+    fillArray(long){
+      this.labelarray1.push(long);
+    },
+    clearMap() {
       // this.drawFlag = false;
       // this.quadFlag = false;
       // this.slippyFlag = false;
-      
+
       const map = this.$refs.map.mapObject;
       // map.off();
       // map.remove();
       map.invalidateSize();
-      if(this.layerGroup !== null){
-      map.removeLayer(this.layerGroup);
-      // this.layerGroup.clearLayers();
+      if (this.layerGroup !== null) {
+        map.removeLayer(this.layerGroup);
+        // this.layerGroup.clearLayers();
       }
-      if(this.drawnItems !== null){
-      map.removeLayer(this.drawnItems);
+      if (this.drawnItems !== null) {
+        map.removeLayer(this.drawnItems);
       }
-      if(this.editableLayers !== null){
-      map.removeLayer(this.editableLayers);
+      if (this.editableLayers !== null) {
+        map.removeLayer(this.editableLayers);
       }
-      this.labelarray1.length = 0;
+      // this.labelarray1.length = 0;
     },
     changeHashFunction(type) {
-       const map = this.$refs.map.mapObject;
-       // refresh map
+      const map = this.$refs.map.mapObject;
+      // refresh map
       // map.off();+
-      // 
+      //
       map.invalidateSize();
       // this.layerGroup.clearLayers();
-      if(this.layerGroup !== null){
-      map.removeLayer(this.layerGroup);
+      if (this.layerGroup !== null) {
+        map.removeLayer(this.layerGroup);
       }
-      if(this.drawnItems !== null){
-      map.removeLayer(this.drawnItems);
+      if (this.drawnItems !== null) {
+        map.removeLayer(this.drawnItems);
       }
-      if(this.editableLayers !== null){
-      map.removeLayer(this.editableLayers);
+      if (this.editableLayers !== null) {
+        map.removeLayer(this.editableLayers);
       }
       console.log("adaptertype", type);
       // if(type == "slippy"){
@@ -187,8 +195,8 @@ export default {
       //   this.slippyFlag = true;
       //   this.quadFlag = false;
       // }
-      console.log("lalal", this.labelarray1);
-      this.labelarray1.length = 0;
+      // console.log("lalal", this.labelarray1);
+      // this.labelarray1.length = 0;
       this.mapDraw(type);
     },
     zoomUpdate(zoom) {
@@ -210,6 +218,7 @@ export default {
       // this.$nextTick(() => {
       const map = this.$refs.map.mapObject;
       var long = new Array();
+      var self = this;
       var labelConfig = {
         noHide: true,
         className: "my-label",
@@ -387,10 +396,13 @@ export default {
       //changehashfunction
       function changeHashFunction(algorithm) {
         // console.log("alg", algorithm);
-
+        self.labelarray1.splice(0, self.labelarray1.length);  
         // map.removeLayer(grayscale)
-        if (algorithm == "slippy") { adapter = slippyAdapter;}
-        else {  adapter = quadAdapter;}
+        if (algorithm == "slippy") {
+          adapter = slippyAdapter;
+        } else {
+          adapter = quadAdapter;
+        }
         prevHash = "NOTAHASH"; // force hash to regenerate
 
         // map.removeLayer(layerGroup);
@@ -424,7 +436,7 @@ export default {
           var layers = adapter.layers(currentHash, zoom);
           for (var attr in layers) {
             // console.log(attr);
-          drawLayer(attr, layers[attr]);
+            drawLayer(attr, layers[attr]);
           }
         }
 
@@ -456,7 +468,7 @@ export default {
           layerGroup.clearLayers();
 
           var layers = adapter.layers(currentHash, zoom);
-          console.log("*-*-",layers);
+          console.log("*-*-", layers);
           for (var attr in layers) {
             // console.log(attr);
             var arr3 = getLayer(attr, layers[attr]);
@@ -619,37 +631,39 @@ export default {
       });
       var clicks;
       clicks = this.clicks;
-      var labels = new Array;
-      // todo
+      var labels = new Array();
+      // todo onclick fill labelaray
+      
       map.on("click", function(e) {
-        
         labels.splice(0, labels.length);
         long.splice(0, long.length);
         // labelarray1.splice(0, this.labelarray1.length);
         labels = [];
         long = [];
         // this.labelarray1 = [];
-        if(clicks == 0 && labels.length == 0 && long.length == 0 ){
-        // var zoom = map.getZoom();
-        mousePositionEvent = e;
-        var marker = e.latlng;
-        labels = getLabels();
-        console.log("labels", labels);
-        
-        labels[2].forEach(element => {
-          long.push(element.long);
-        });
-        console.log("labels long", long);
-        this.labelarray1 = long;
-        // console.log(this.labelarray1);
-        // TODO make it a modal or copy to clipboard
-        alert(long);
-        // labels.length = 0;
-        // long.length = 0;
-        clicks = clicks + 1;
+        if (clicks == 0 && labels.length == 0 && long.length == 0) {
+          // var zoom = map.getZoom();
+          mousePositionEvent = e;
+          var marker = e.latlng;
+          labels = getLabels();
+          console.log("labels", labels);
+
+          labels[2].forEach(element => {
+            long.push(element.long);
+          });
+          console.log("labels long", long);
+          
+          // console.log(this.labelarray1);
+          // TODO make it a modal or copy to clipboard
+          alert(long);
+          self.fillArray(long);
+          // labels.length = 0;
+          // long.length = 0;
+          clicks = clicks + 1;
         }
         // L.marker(marker).addTo(map).bindPopup("label Array" + this.labelarray1).openPopup();
       });
+      // this.fillArray(long);
       this.clicks = clicks;
       // });
       this.layerGroup = layerGroup;
@@ -665,7 +679,7 @@ export default {
         polyline: {
           allowIntersection: false,
           showArea: true,
-          measureControl: true,
+          measureControl: true
         },
         polygon: true,
         rectangle: true,
@@ -681,15 +695,26 @@ export default {
       var type = e.layerType,
         layer = e.layer;
 
-      if(type === 'circle'){
-        layer.on("click", function(){
+      if (type === "circle") {
+        layer.on("click", function() {
           console.log("circle radius in mts", theRadius);
-        })
+        });
         var theCenterPt = layer.getLatLng();
         var theRadius = layer.getRadius();
         var marker = theCenterPt;
-        L.marker(marker).addTo(drawnItems).bindPopup("centre: "+ "<dd>"+ marker + "</dd>" + " radius: "+ theRadius.toFixed(2) + " mts").openPopup();
-      }  
+        L.marker(marker)
+          .addTo(drawnItems)
+          .bindPopup(
+            "centre: " +
+              "<dd>" +
+              marker +
+              "</dd>" +
+              " radius: " +
+              theRadius.toFixed(2) +
+              " mts"
+          )
+          .openPopup();
+      }
 
       if (type === "rectangle") {
         layer.on("click", function() {
@@ -705,28 +730,31 @@ export default {
 
       if (type === "polyline") {
         //calculate distance between each points
-         function getDistance() {
-            var distanceArray = new Array;
-            var distance = 0;
-            var  length = layer._latlngs.length;
-            var marker0 = layer._latlngs[0];
-            L.marker(marker0).addTo(drawnItems).bindTooltip("0 km");
-            for (var i = 1; i < length; i++) {
-              distance += layer._latlngs[i].distanceTo(layer._latlngs[i - 1]);
-              var marker = layer._latlngs[i];
-              console.log(marker);
-              L.marker(marker).addTo(drawnItems).bindTooltip((distance/1000).toFixed(2) + " km");
-              distanceArray.push(distance);
-              // layer._latlngs[i].bindTooltip(distance + " km").openPopup();
-            }
-            console.log(distanceArray);
-            // optional
-           
-              return distance / 1000;
-            
+        function getDistance() {
+          var distanceArray = new Array();
+          var distance = 0;
+          var length = layer._latlngs.length;
+          var marker0 = layer._latlngs[0];
+          L.marker(marker0)
+            .addTo(drawnItems)
+            .bindTooltip("0 km");
+          for (var i = 1; i < length; i++) {
+            distance += layer._latlngs[i].distanceTo(layer._latlngs[i - 1]);
+            var marker = layer._latlngs[i];
+            console.log(marker);
+            L.marker(marker)
+              .addTo(drawnItems)
+              .bindTooltip((distance / 1000).toFixed(2) + " km");
+            distanceArray.push(distance);
+            // layer._latlngs[i].bindTooltip(distance + " km").openPopup();
           }
-          var distance = getDistance().toFixed(2);
-          layer.bindTooltip("total distance: "+ distance + " km");
+          console.log(distanceArray);
+          // optional
+
+          return distance / 1000;
+        }
+        var distance = getDistance().toFixed(2);
+        layer.bindTooltip("total distance: " + distance + " km");
         layer.on("mouseover", function() {
           // console.log(layer);
           // var latlng = layer.getLatLngs();
@@ -736,7 +764,7 @@ export default {
           // layer.bindTooltip("distance: " + distance + " km").openPopup();
           // var distance = layer.getDistance();
           // layer.bindTooltip("distance: "+ distance + "km").openPopup();
-          layer.bindPopup("total distance: "+ distance + " km").openPopup();
+          layer.bindPopup("total distance: " + distance + " km").openPopup();
         });
       }
 
