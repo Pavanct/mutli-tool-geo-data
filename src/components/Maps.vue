@@ -64,12 +64,13 @@ export default {
       // drawFlag: false,
       // quadFlag: false,
       // slippyFlag: false,
+      clicks: 0,
       hash: "",
       bounds: "",
       drawnItems: null,
       editableLayers: null,
       layerGroup: null,
-      labelarray1: ["no data"],
+      labelarray1: [],
       zoom: 13,
       center: latLng(52.5138587, 13.3187443),
       url:
@@ -616,10 +617,19 @@ export default {
         mousePositionEvent = e;
         updateLayer();
       });
+      var clicks;
+      clicks = this.clicks;
       var labels = new Array;
       // todo
       map.on("click", function(e) {
-        if(labels.length == 0 && long.length == 0){
+        
+        labels.splice(0, labels.length);
+        long.splice(0, long.length);
+        // labelarray1.splice(0, this.labelarray1.length);
+        labels = [];
+        long = [];
+        // this.labelarray1 = [];
+        if(clicks == 0 && labels.length == 0 && long.length == 0 ){
         // var zoom = map.getZoom();
         mousePositionEvent = e;
         var marker = e.latlng;
@@ -633,16 +643,14 @@ export default {
         this.labelarray1 = long;
         // console.log(this.labelarray1);
         // TODO make it a modal or copy to clipboard
-        alert(this.labelarray1);
+        alert(long);
         // labels.length = 0;
         // long.length = 0;
-        labels.splice(0, labels.length);
-        long.splice(0, long.length);
+        clicks = clicks + 1;
         }
         // L.marker(marker).addTo(map).bindPopup("label Array" + this.labelarray1).openPopup();
       });
-      console.log("*/*/",labels);
-      console.log("/*/",long);
+      this.clicks = clicks;
       // });
       this.layerGroup = layerGroup;
     }
