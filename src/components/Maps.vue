@@ -147,8 +147,9 @@ export default {
       // this.slippyFlag = false;
       
       const map = this.$refs.map.mapObject;
-      map.off();
+      // map.off();
       // map.remove();
+      map.invalidateSize();
       if(this.layerGroup !== null){
       map.removeLayer(this.layerGroup);
       // this.layerGroup.clearLayers();
@@ -159,11 +160,14 @@ export default {
       if(this.editableLayers !== null){
       map.removeLayer(this.editableLayers);
       }
+      this.labelarray1.length = 0;
     },
     changeHashFunction(type) {
        const map = this.$refs.map.mapObject;
        // refresh map
-        map.off();
+      // map.off();+
+      // 
+      map.invalidateSize();
       // this.layerGroup.clearLayers();
       if(this.layerGroup !== null){
       map.removeLayer(this.layerGroup);
@@ -615,8 +619,7 @@ export default {
       var labels = new Array;
       // todo
       map.on("click", function(e) {
-        long.length = 0;
-        labels.length = 0;
+        if(labels.length == 0 && long.length == 0){
         // var zoom = map.getZoom();
         mousePositionEvent = e;
         var marker = e.latlng;
@@ -631,8 +634,15 @@ export default {
         // console.log(this.labelarray1);
         // TODO make it a modal or copy to clipboard
         alert(this.labelarray1);
+        // labels.length = 0;
+        // long.length = 0;
+        labels.splice(0, labels.length);
+        long.splice(0, long.length);
+        }
         // L.marker(marker).addTo(map).bindPopup("label Array" + this.labelarray1).openPopup();
       });
+      console.log("*/*/",labels);
+      console.log("/*/",long);
       // });
       this.layerGroup = layerGroup;
     }
