@@ -26,25 +26,38 @@
     <b-button id="quad" @click="changeHashFunction('quadtree')">Quad</b-button>
     <b-button id="draw" @click="mapDraw">Draw</b-button>
     <b-button id="clear" @click="clearMap">Clear</b-button>
-    <div id="card">
+    <!-- Display tiles for copy in a modal -->
+    <div id="modal">
       <b-button v-b-modal.modal-1>Copy</b-button>
       <b-modal id="modal-1" title="Copy tiles">
-        <p class="my-4">{{ labelarray1 }}</p>
+        <span class="my-4" v-for="item in labelarray1" v-bind:key="item">
+          <span v-for="item1 in item" v-bind:key="item1">
+            <li>{{ item1 }}</li>
+          </span>
+        </span>
       </b-modal>
     </div>
+    <!-- <div id="card">
+      <b-button type="button"
+      v-clipboard:copy="message"
+      v-clipboard:success="onCopy"
+      v-clipboard:error="onError">Copy!</b-button>
+    </div> -->
 
     <!-- TODO Copy to Clipboard
     <div></div>-->
-    <!-- <b-card bg-variant="light" header="labels" class="text-center" id="card">
-      <div v-for="item1 in labelarray1" v-bind:key="item1">
-        <span>{{ item1 }}</span>
-      </div>
-    </b-card>-->
+    <b-card bg-variant="light" header="Tiles" class="text-center" id="card">
+      <span class="my-4" v-for="item in labelarray1" v-bind:key="item">
+          <span v-for="item1 in item" v-bind:key="item1">
+            <li>{{ item1 }}</li>
+          </span>
+        </span>
+    </b-card>
   </div>
 </template>
 
 <script>
-import Vue from 'vue';
+import Vue from "vue";
 import { latLng } from "leaflet";
 import {
   LMap,
@@ -147,7 +160,13 @@ export default {
     };
   },
   methods: {
-    fillArray(long){
+    onCopy: function (e) {
+      alert('You just copied: ' + e.text)
+    },
+    onError: function (e) {
+      alert('Failed to copy texts')
+    },
+    fillArray(long) {
       this.labelarray1.push(long);
     },
     clearMap() {
@@ -396,7 +415,7 @@ export default {
       //changehashfunction
       function changeHashFunction(algorithm) {
         // console.log("alg", algorithm);
-        self.labelarray1.splice(0, self.labelarray1.length);  
+        self.labelarray1.splice(0, self.labelarray1.length);
         // map.removeLayer(grayscale)
         if (algorithm == "slippy") {
           adapter = slippyAdapter;
@@ -633,7 +652,7 @@ export default {
       clicks = this.clicks;
       var labels = new Array();
       // todo onclick fill labelaray
-      
+
       map.on("click", function(e) {
         labels.splice(0, labels.length);
         long.splice(0, long.length);
@@ -652,10 +671,10 @@ export default {
             long.push(element.long);
           });
           console.log("labels long", long);
-          
+
           // console.log(this.labelarray1);
           // TODO make it a modal or copy to clipboard
-          alert(long);
+          // alert(long);
           self.fillArray(long);
           // labels.length = 0;
           // long.length = 0;
@@ -840,11 +859,10 @@ html {
   z-index: 500;
 }
 
-#card {
+#modal {
   position: absolute;
-  bottom: 80px;
-  margin-left: 47%;
-  padding: 10px;
+  top: 400px;
+  right: 20px;
   z-index: 500;
 }
 .my-label {
@@ -857,5 +875,12 @@ html {
   font-size: 30px;
   color: rgba(255, 0, 0, 0.5);
   background-color: transparent;
+}
+#card {
+  position: absolute;
+  bottom: 100px;
+  left: 10px;
+  z-index: 500;
+  padding: 10px;
 }
 </style>
