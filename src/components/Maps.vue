@@ -10,7 +10,7 @@
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate"
     >
-      <l-control-layers position="topright"></l-control-layers>
+      <l-control-layers position="topleft"></l-control-layers>
       <l-tile-layer
         v-for="tileProvider in tileProviders"
         :key="tileProvider.name"
@@ -61,6 +61,11 @@ export default {
 
   data() {
     return {
+      // drawFlag: false,
+      // quadFlag: false,
+      // slippyFlag: false,
+      hash: "",
+      bounds: "",
       drawnItems: null,
       editableLayers: null,
       layerGroup: null,
@@ -137,9 +142,16 @@ export default {
   },
   methods: {
     clearMap(){
+      // this.drawFlag = false;
+      // this.quadFlag = false;
+      // this.slippyFlag = false;
+      
       const map = this.$refs.map.mapObject;
+      map.off();
+      // map.remove();
       if(this.layerGroup !== null){
       map.removeLayer(this.layerGroup);
+      // this.layerGroup.clearLayers();
       }
       if(this.drawnItems !== null){
       map.removeLayer(this.drawnItems);
@@ -149,7 +161,29 @@ export default {
       }
     },
     changeHashFunction(type) {
+       const map = this.$refs.map.mapObject;
+       // refresh map
+        map.off();
+      // this.layerGroup.clearLayers();
+      if(this.layerGroup !== null){
+      map.removeLayer(this.layerGroup);
+      }
+      if(this.drawnItems !== null){
+      map.removeLayer(this.drawnItems);
+      }
+      if(this.editableLayers !== null){
+      map.removeLayer(this.editableLayers);
+      }
       console.log("adaptertype", type);
+      // if(type == "slippy"){
+      //   this.slippyFlag = false;
+      //   this.quadFlag = true;
+      // }else if(type == "quadtree"){
+      //   this.slippyFlag = true;
+      //   this.quadFlag = false;
+      // }
+      console.log("lalal", this.labelarray1);
+      this.labelarray1.length = 0;
       this.mapDraw(type);
     },
     zoomUpdate(zoom) {
@@ -165,70 +199,12 @@ export default {
       alert("Click!");
     },
     mapDraw(type) {
+      // this.drawFlag = true;
+      // this.quadFlag = false;
+      // this.slippyFlag = true;
       // this.$nextTick(() => {
       const map = this.$refs.map.mapObject;
-      // const drawControl = new L.Control.Draw({
-      //   position: "topright",
-      //   draw: {
-      //     polyline: {
-      //       allowIntersection: false,
-      //       showArea: true
-      //     },
-      //     polygon: true,
-      //     rectangle: true,
-      //     circle: true,
-      //     marker: true
-      //   }
-      // });
-
-      // var drawnItems = new L.FeatureGroup();
-      // map.addLayer(drawnItems);
-
-      // map.on("draw:created", function(e) {
-      //   var type = e.layerType,
-      //     layer = e.layer;
-
-      //   if (type === "rectangle") {
-      //     layer.on("mouseover", function() {
-      //       alert(layer.getLatLngs());
-      //     });
-      //   }
-
-      //   if (type === "polygon") {
-      //     layer.on("mouseover", function() {
-      //       alert(layer.getLatLngs());
-      //     });
-      //   }
-
-      //   if (type === "polyline") {
-      //     layer.on("mouseover", function() {
-      //       alert(layer.getLatLngs());
-      //     });
-      //   }
-
-      //   drawnItems.addLayer(layer);
-      // });
-
-      // map.addControl(drawControl);
-
-      // const editableLayers = new L.FeatureGroup().addTo(map);
-      // map.on(L.Draw.Event.CREATED, e => {
-      //   // const type = e.layerType;
-      //   const layer = e.layer;
-      //   var type = e.layerType;
-
-      //   if (type === "marker") {
-      //     layer.bindPopup("LatLng: " + layer.getLatLng()).openPopup();
-      //   }
-
-      //   // if (type === "rectangle") {
-      //   //   layer.bindPopup("LatLng: " + layer.getLatLng()).openPopup();
-      //   // }
-
-      //   // Do whatever else you need to. (save to db, add to map etc)
-      //   editableLayers.addLayer(layer);
-      // });
-
+      var long = new Array();
       var labelConfig = {
         noHide: true,
         className: "my-label",
@@ -405,11 +381,11 @@ export default {
 
       //changehashfunction
       function changeHashFunction(algorithm) {
-        console.log("alg", algorithm);
+        // console.log("alg", algorithm);
 
         // map.removeLayer(grayscale)
-        if (algorithm == "slippy") adapter = slippyAdapter;
-        else adapter = quadAdapter;
+        if (algorithm == "slippy") { adapter = slippyAdapter;}
+        else {  adapter = quadAdapter;}
         prevHash = "NOTAHASH"; // force hash to regenerate
 
         // map.removeLayer(layerGroup);
@@ -443,7 +419,7 @@ export default {
           var layers = adapter.layers(currentHash, zoom);
           for (var attr in layers) {
             // console.log(attr);
-            drawLayer(attr, layers[attr]);
+          drawLayer(attr, layers[attr]);
           }
         }
 
@@ -475,6 +451,7 @@ export default {
           layerGroup.clearLayers();
 
           var layers = adapter.layers(currentHash, zoom);
+          console.log("*-*-",layers);
           for (var attr in layers) {
             // console.log(attr);
             var arr3 = getLayer(attr, layers[attr]);
@@ -627,7 +604,7 @@ export default {
       map.on("zoomend", updateLayer);
       map.on("moveend", updateLayer);
 
-      // init
+      // first call
       changeHashFunction(type);
       // updateLayer();
 
@@ -635,15 +612,17 @@ export default {
         mousePositionEvent = e;
         updateLayer();
       });
-
+      var labels = new Array;
       // todo
       map.on("click", function(e) {
+        long.length = 0;
+        labels.length = 0;
         // var zoom = map.getZoom();
         mousePositionEvent = e;
         var marker = e.latlng;
-        var labels = getLabels();
+        labels = getLabels();
         console.log("labels", labels);
-        var long = new Array();
+        
         labels[2].forEach(element => {
           long.push(element.long);
         });
@@ -658,8 +637,10 @@ export default {
       this.layerGroup = layerGroup;
     }
   },
+  // init
   mounted() {
     const map = this.$refs.map.mapObject;
+    map.invalidateSize();
     const drawControl = new L.Control.Draw({
       position: "topright",
       draw: {
