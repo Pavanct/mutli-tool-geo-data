@@ -21,11 +21,17 @@
         :token="token"
         layer-type="base"
       />
+      <l-geo-json
+        :geojson="geojson"
+      >
+      </l-geo-json>
     </l-map>
     <b-button id="slippy" @click="changeHashFunction('slippy')">Slippy</b-button>
     <b-button id="quad" @click="changeHashFunction('quadtree')">Quad</b-button>
-    <b-button id="draw" @click="mapDraw">Draw</b-button>
+    <!-- <b-button id="draw" @click="mapDraw">Draw</b-button> -->
     <b-button id="clear" @click="clearMap">Clear</b-button>
+    <b-button id="geo" @click="showGeoJson">Show</b-button>
+    <b-button id="hide" @click="hideGeoJson">Hide</b-button>
     <!-- Display tiles for copy in a modal -->
     <div id="modal">
       <b-button v-b-modal.modal-1>Copy</b-button>
@@ -57,11 +63,13 @@
 </template>
 
 <script>
+import recJson from "./map.json";
 import Vue from "vue";
 import { latLng } from "leaflet";
 import {
   LMap,
-  LTileLayer
+  LTileLayer,
+  LGeoJson
   // LMarker,
   // LPopup,
   // LTooltip,
@@ -74,7 +82,8 @@ export default {
   name: "Maps",
   components: {
     LMap,
-    LTileLayer
+    LTileLayer,
+    LGeoJson
   },
 
   data() {
@@ -82,6 +91,7 @@ export default {
       // drawFlag: false,
       // quadFlag: false,
       // slippyFlag: false,
+      geojson: null,
       clicks: 0,
       hash: "",
       bounds: "",
@@ -160,6 +170,12 @@ export default {
     };
   },
   methods: {
+    showGeoJson(){
+      this.geojson = recJson;
+    },
+    hideGeoJson(){
+      this.geojson = null;
+    },
     onCopy: function (e) {
       alert('You just copied: ' + e.text)
     },
@@ -709,7 +725,6 @@ export default {
 
     var drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
-
     map.on("draw:created", function(e) {
       var type = e.layerType,
         layer = e.layer;
@@ -718,6 +733,7 @@ export default {
         layer.on("click", function() {
           console.log("circle radius in mts", theRadius);
         });
+        
         var theCenterPt = layer.getLatLng();
         var theRadius = layer.getRadius();
         var marker = theCenterPt;
@@ -737,12 +753,20 @@ export default {
 
       if (type === "rectangle") {
         layer.on("click", function() {
+          var seeArea = L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]);
+          console.log("*-*",seeArea);
+          layer.bindPopup("total area: " + seeArea.toFixed(2) + "sqmts").openPopup();    
           console.log(layer.getLatLngs());
+          // var uu = L.LatLng.utm(kl);
+          // console.log("utm", uu);
         });
       }
 
       if (type === "polygon") {
         layer.on("click", function() {
+          var seeArea = L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]);
+          console.log("*-*",seeArea);
+          layer.bindPopup("total area: " + seeArea.toFixed(2) + " sqmts").openPopup();
           console.log(layer.getLatLngs());
         });
       }
@@ -858,7 +882,20 @@ html {
   padding: 10px;
   z-index: 500;
 }
-
+#geo {
+  position: absolute;
+  top: 580px;
+  right: 20px;
+  padding: 10px;
+  z-index: 500;
+}
+#hide {
+  position: absolute;
+  top: 630px;
+  right: 20px;
+  padding: 10px;
+  z-index: 500;
+}
 #modal {
   position: absolute;
   top: 400px;
