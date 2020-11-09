@@ -1,4 +1,3 @@
-Hosted at: https://multitool.pavanct.com
 # multi-tool-geo-data
 
 ## Project setup
